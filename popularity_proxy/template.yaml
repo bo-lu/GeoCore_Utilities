@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  python3.9
+
+  Sample SAM Template for geocore_utilities
+
+Resources:
+  GeoCoreUtilitiesFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      MemorySize: 1024
+      PackageType: Image
+      Timeout: 900
+      Events:
+        GeoCoreUtilities:
+          Type: Api 
+          Properties:
+            Path: /geocore_utilities
+            Method: get
+      Environment:
+        Variables:
+          GEOJSON_BUCKET_NAME: 'redacted'
+          UTILITIES_BUCKET_NAME: 'redacted'
+          GEONETWORK_POPULARITY_PATH: 'redacted'
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-dev-redacted
+        SubnetIds:
+          - subnet-oz-az-a-redacted
+          - subnet-oz-az-b-redacted
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./geocore_utilities
+      DockerTag: python3.9-v1
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  GeoCoreUtilitiesApi:
+    Description: "API Gateway endpoint URL for Prod stage for the geocore_utilities function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/geocore_utilities/"
+  GeoCoreUtilitiesFunction:
+    Description: "geocore_utilities Lambda Function ARN"
+    Value: !GetAtt GeoCoreUtilitiesFunction.Arn
+  GeoCoreUtilitiesFunctionIamRole:
+    Description: "Implicit IAM Role created for geocore utilities function"
+    Value: !GetAtt GeoCoreUtilitiesFunctionRole.Arn
