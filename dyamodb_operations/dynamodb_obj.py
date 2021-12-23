@@ -3,34 +3,50 @@ import boto3
 from botocore.exceptions import ClientError
 
 """ A very simple DynamoDB wrapper written in python for AWS Lambda
-Handles general CRUD operations
 """
 
 class Dynamodb:
     def __init__(self, region):
         #assuming aws secrets are know since we are running in lambda
         self._region = region
-        self._dynamodb = boto3.resource('dynamodb', region_name=_region)
+        self._dynamodb = boto3.resource('dynamodb', region_name=region)
         
-    def create_table (self, table_name, schema, attributes, throughput, gsi=None): 
+    def create_table (self, table_name, schema, attributes, throughput=None, billing=None, gsi=None): 
         """Create a table and wait for completion
         """
         try:
-            if(len(global_secondary_indexes)>0):
-                table = self._dynamodb.create_table(
-                    TableName=table_name,
-                    KeySchema=schema,
-                    AttributeDefinitions=attributes,
-                    GlobalSecondaryIndexes=gsi,
-                    ProvisionedThroughput=throughput
-                )
-            else:
-                table = self._dynamodb.create_table(
-                    TableName=table_name,
-                    KeySchema=schema,
-                    AttributeDefinitions=attributes,
-                    ProvisionedThroughput=throughput
-                )
+            if throughput:
+                if(len(gsi)>0):
+                    table = self._dynamodb.create_table(
+                        TableName=table_name,
+                        KeySchema=schema,
+                        AttributeDefinitions=attributes,
+                        GlobalSecondaryIndexes=gsi,
+                        ProvisionedThroughput=throughput
+                    )
+                else:
+                    table = self._dynamodb.create_table(
+                        TableName=table_name,
+                        KeySchema=schema,
+                        AttributeDefinitions=attributes,
+                        ProvisionedThroughput=throughput
+                    )
+            elif billing:
+                if(len(gsi)>0):
+                    table = self._dynamodb.create_table(
+                        TableName=table_name,
+                        KeySchema=schema,
+                        AttributeDefinitions=attributes,
+                        GlobalSecondaryIndexes=gsi,
+                        BillingMode=billing
+                    )
+                else:
+                    table = self._dynamodb.create_table(
+                        TableName=table_name,
+                        KeySchema=schema,
+                        AttributeDefinitions=attributes,
+                        BillingMode=billing
+                    )
             #wait for table completion
             table.meta.client.get_waiter('table_exists').wait(TableName=table)
         except ClientError as e:
@@ -105,4 +121,3 @@ class Dynamodb:
             return False
         else:
             return True
-            
