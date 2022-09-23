@@ -1,0 +1,27 @@
+name: Build deployment AWS Lambdas as ZIP
+on:
+  push:
+    branches:
+      - 'main' 
+      - 'master'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Echo intro message
+        run: echo "Building packages"
+      - name: Build project
+        run: |
+          pwd
+          for func in collections popularity_proxy ; do
+            cd ${func}
+            if [[ -f "requirements.txt" ]]; then
+              pip install --target . -r requirements.txt
+            fi
+            zip -r ../${func}.zip .
+            cd ..
+          done
