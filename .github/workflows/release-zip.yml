@@ -32,9 +32,10 @@ jobs:
             mv ${func}.zip ..
             cd ..
           done
+          pwd
                    
       - name: Upload zip file artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: collections
           path: collections.zip
