@@ -26,6 +26,7 @@ jobs:
               rm -rf botocore*
               rm -rf boto3*
               rm -rf **/tests
+              rm -rf **/__pycache__
             fi
             zip -r ${func}.zip .
             mv ${func}.zip ..
