@@ -22,9 +22,9 @@ jobs:
           for func in collections popularity_proxy ; do
             cd ${func}
             if [[ -f "requirements.txt" ]]; then
-              pip install --target . -r requirements.txt
-              rm -rf botocore
-              rm -rf boto3
+              pip install --target . -r requirements.txt           
+              rm -rf **/botocore*
+              rm -rf **/boto3*
             fi
             zip -r ../${func}.zip .
             cd ..
