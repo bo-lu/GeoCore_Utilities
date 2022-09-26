@@ -12,18 +12,24 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: '3.8'
-        
-      - name: Get AWS Wrangler as a zip file
-        uses: wei/wget@v1
-        with:
-          args: -O awswrangler.zip https://github.com/aws/aws-sdk-pandas/releases/download/2.17.0/awswrangler-layer-2.17.0-py3.8.zip
           
-      - name: Add python source code to AWS Wrangler zip
+      - name: Echo intro message
+        run: echo "Building packages"
+        
+      - name: Build project
         run: |
-          zip awswrangler.zip collections/app.py
-
+          pwd
+          for func in collections popularity_proxy ; do
+            cd ${func}
+            if [[ -f "requirements.txt" ]]; then
+              pip install --target . -r requirements.txt
+            fi
+            zip -r ../${func}.zip .
+            cd ..
+          done
+                   
       - name: Upload zip file artifact
         uses: actions/upload-artifact@v2
         with:
-          name: build
-          path: awswrangler.zip
+          name: collections
+          path: collections.zip
