@@ -20,7 +20,7 @@ jobs:
           
       - name: Add python source code to AWS Wrangler zip
         run: |
-          zip awswrangler.zip colections/app.py
+          zip awswrangler.zip collections/app.py
 
       - name: Upload zip file artifact
         uses: actions/upload-artifact@v2
