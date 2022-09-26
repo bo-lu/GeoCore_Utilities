@@ -25,8 +25,10 @@ jobs:
               pip install --target . -r requirements.txt           
               rm -rf botocore*
               rm -rf boto3*
+              rm -rf **/tests
             fi
-            zip -r ../${func}.zip .
+            zip -r ${func}.zip .
+            mv ${func}.zip ..
             cd ..
           done
                    
